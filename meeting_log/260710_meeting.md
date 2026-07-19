@@ -1,0 +1,205 @@
+# 🧠 안전고리 체결 판별 모델 최종 고도화 회의록
+
+> **💡 Summary**
+  EfficientNet 기반 안전고리 체결 여부 분류 모델의 성능을 확인하고, 안전 분야의 특성을 고려하여 재현율을 중심으로 평가하기로 하였다. 객체 탐지와 체결 분류의 임계값 조정, 영상의 지속 시간 활용, 하네스 착용 여부 결합 등 최종 고도화 방향과 제출 준비 사항을 정리하였다.
+
+---
+
+## 📅 회의 개요
+
+- **회의 날짜:** 2026-07-10
+
+- **회의 주제:** 안전고리 체결 판별 모델 최종 고도화
+
+- **회의 안건:** 모델 성능 점검, 평가 지표 및 임계값 설정, 영상 기반 안전 판단 방식과 최종 결과물 준비
+
+---
+
+## 📌 회의 안건
+
+- EfficientNet 기반 체결 여부 분류 모델의 현재 성능 확인
+
+- 안전 판단을 위한 핵심 평가 지표 선정
+
+- 객체 탐지 및 체결 분류 임계값 조정
+
+- 영상의 시간 정보를 활용한 `safe`·`danger` 판단 방식 검토
+
+- 안전고리 미탐 및 화면 깜빡임 문제 해결 방안 논의
+
+- 하네스와 랜야드의 활용 범위 정리
+
+- 모델 성능 평가, 비교 자료 및 최종 영상 준비
+
+## 🗣️ 주요 논의 내용
+
+### 1. 현재 모델 진행 상황
+
+- EfficientNet을 수정하여 적용한 결과, 안전고리 체결 여부를 예상보다 잘 분류하는 결과를 확인하였다.
+
+- EfficientNet V1-B0는 비교적 가벼우며 실시간 탐지에 유리한 모델로 검토되었다.
+
+- 현재 모델은 일정 수준의 결과물로 제출할 수 있는 상태에 도달한 것으로 판단하였다.
+
+### 2. 모델의 판단 과정
+
+- 모델의 안전 상태 판단 과정은 다음 순서로 구성된다.
+  1. 안전고리 탐지
+  1. 안전고리 체결 여부 판단
+  1. 작업자의 `safe` 또는 `danger` 상태 판단
+
+- 현재 객체 탐지 임계값은 `0.4`, 체결 여부 분류 임계값은 `0.85`로 설정되어 있다.
+
+### 3. 핵심 평가 지표
+
+- 프로젝트에서 가장 중요하게 확인해야 할 평가 지표는 재현율로 정리하였다.
+
+- 안전하지 않은 상황을 안전하다고 판단하면 사고로 이어질 수 있으므로, 위험 상황을 놓치지 않는 방향으로 모델을 설정해야 한다.
+
+- 안전고리 체결 여부 판단 기준을 엄격하게 설정하여 위험한 상황을 안전하다고 분류하는 오류를 줄이는 방향을 검토하였다.
+
+- 최종 결과에는 다음 지표와 학습 조건을 함께 기록하기로 하였다.
+  - mAP
+  - Recall
+  - F1-score
+  - Threshold
+  - 원본 이미지 수
+  - 데이터 증강 규모
+
+### 4. 객체 탐지 및 체결 분류 임계값
+
+- 안전고리와 유사하게 생긴 객체도 `hook`으로 탐지하는 한계가 확인되었다.
+
+- 이러한 오탐을 줄이기 위해 안전고리 객체 탐지 임계값을 높여 더 엄격하게 객체를 탐지하는 방안을 검토하였다.
+
+- 탐지된 안전고리만 체결 여부 분류 모델에 전달하도록 하여 잘못된 객체가 `connected`로 판단되는 문제를 줄이고자 하였다.
+
+- 임계값 조정만으로 문제가 해결되지 않을 경우 영상의 시간 정보를 활용하거나, 모델의 한계로 정리하는 방안을 고려하였다.
+
+### 5. 영상의 시간 정보를 활용한 안전 판단
+
+- 단일 프레임의 결과만으로 체결 상태를 판단하면 안전고리와 유사한 객체나 순간적인 중첩으로 인해 오탐이 발생할 수 있다.
+
+- 영상에서 일정 시간 또는 일정 프레임 이상 `connected` 상태가 유지될 때 안전한 상태로 판단하는 방안을 검토하였다.
+
+- 가까운 거리에서 촬영한 영상에서는 파이프를 연결하는 과정에서 손이 있을 때만 `connected` 또는 `safe`로 표시되고, 손을 떼면 표시가 사라지는 사례가 확인되었다.
+
+- 이러한 순간적인 탐지를 지속 시간 기준으로 제거할 수 있을 것으로 판단하였다.
+
+- 임계값과 시간 기준을 모두 적용하더라도 해결되지 않는 문제는 모델의 한계와 향후 개선 사항으로 제시하는 방안을 검토하였다.
+
+### 6. 안전고리 미탐 처리
+
+- 현재는 안전고리가 탐지된 경우에만 체결 여부와 안전 상태를 판단한다.
+
+- 안전고리가 일정 시간 이상 탐지되지 않으면 해당 작업자를 위험 상태로 판단하는 방안을 검토하였다.
+
+- 이를 통해 안전고리가 미체결되었거나 모델에서 계속 탐지되지 않는 상황을 별도로 처리하고자 하였다.
+
+- 다만 원거리나 가림 등으로 안전고리가 일시적으로 탐지되지 않는 경우도 있으므로 시간 기준을 함께 설정할 필요가 있다.
+
+### 7. 영상 표시 및 알림 시스템
+
+- 영상에 모델을 적용할 때 탐지 결과가 프레임마다 나타났다 사라지는 깜빡임 현상이 확인되었다.
+
+- 일정 시간 동안 상태를 유지하거나 누적 결과를 활용하여 표시를 안정화하는 방안을 검토하였다.
+
+- 최종 알림 시스템을 어떤 형태로 구성할지도 논의하였다.
+
+- 위험 상황 발생 시 TTS를 활용하여 음성 알림을 제공하는 방식도 적용 가능하다고 보았다.
+
+- 센서 기반 시스템에서는 안전고리의 체결과 해제를 감지하고, 작업자의 고유 ID를 기준으로 관제 관리자에게 알림을 보내는 방식이 언급되었다.
+
+### 8. 하네스와 랜야드 활용
+
+- 기존에는 하네스·랜야드·안전고리의 연결 상태를 모두 활용하여 작업자의 안전 여부를 판단하고자 하였다.
+
+- 그러나 작업자의 앞모습과 뒷모습에 따라 랜야드와 하네스의 체결 여부를 확인하기 어렵다는 문제가 있다.
+
+- 명확한 활용 방안을 찾지 못할 경우 랜야드 체결 여부 판단은 현재 모델의 한계와 향후 개선 사항으로 제시하기로 하였다.
+
+- 기존 연구는 안전모나 안전조끼 또는 안전고리 등 하나의 안전 장비에 집중하는 경우가 많았다.
+
+- 본 프로젝트는 안전고리 체결 여부와 하네스 착용 여부를 함께 판단한다는 점을 차별점으로 정리하였다.
+
+### 9. 모델 고도화 및 비교 자료
+
+- 새로 수집한 미체결 데이터를 ViT에 추가 학습하여 성능을 확인하기로 하였다.
+
+- YOLOv11과 RF-DETR의 탐지 결과 이미지를 함께 제시하여 모델 성능을 비교하기로 하였다.
+
+- RF-DETR의 정량적 평가 지표를 정리하기로 하였다.
+
+- 소형 객체 탐지 관련 논문 등을 베이스라인으로 설정하고, 현재 객체 탐지 지표와 비교하기로 하였다.
+
+- 모델 구조를 수정하거나 내부 Feature Map을 활용한 과정을 문서에 기술하기로 하였다.
+
+### 10. 최종 영상 선정
+
+- 모델 시연에 사용할 최종 영상을 선정하기로 하였다.
+
+- 다음 영상과 구간을 검토 대상으로 정리하였다.
+  - [영상 1](https://www.youtube.com/watch?v=zoSQKeOpSF0): 20분 30초 이후
+  - [영상 2](https://www.youtube.com/watch?v=18AdC40I2oU)
+  - [영상 3](https://www.youtube.com/watch?v=l_3U5YqG8PQ): 8분 15초~14분, 19분 30초~20분
+  - [영상 4](https://www.youtube.com/watch?v=lGDjYTwh3MQ): 0분~1분 47초
+
+- 추가로 활용 가능한 영상이 있으면 팀원 간 공유하기로 하였다.
+
+## 🎯 회의 결과
+
+- EfficientNet V1-B0 기반 안전고리 체결 여부 분류 모델을 최종 결과물에 활용하는 방향으로 정리하였다.
+
+- 안전 분야의 특성을 고려하여 재현율을 핵심 평가 지표로 설정하고, 위험 상황을 놓치지 않는 보수적인 판단 기준을 적용하기로 하였다.
+
+- 객체 탐지 임계값과 체결 여부 분류 임계값을 조정하여 오탐과 미탐의 변화를 비교하기로 하였다.
+
+- 임계값만으로 해결되지 않는 문제는 영상에서 상태가 유지되는 시간이나 프레임 수를 활용하여 보완하기로 하였다.
+
+- 안전고리가 일정 시간 이상 탐지되지 않으면 위험 상태로 판단하는 방안을 검토하기로 하였다.
+
+- 영상 결과의 깜빡임을 줄이기 위해 시간 누적 또는 상태 유지 방식을 적용하는 방향을 검토하기로 하였다.
+
+- 작업자의 안전 상태는 안전고리 체결 여부와 하네스 착용 여부를 함께 활용하여 판단하는 방향으로 정리하였다.
+
+- 랜야드와 하네스의 체결 여부는 시야와 구도에 따른 한계가 있으므로 향후 개선 사항으로 제시하기로 하였다.
+
+- YOLOv11과 RF-DETR의 탐지 결과 및 평가 지표를 비교하고, 소형 객체 탐지 연구를 베이스라인으로 활용하기로 하였다.
+
+- 각 담당자는 모델 고도화와 데이터 학습을 진행한 뒤 다음 회의에서 결과를 종합하여 마무리하기로 하였다.
+
+## ✅ To-Do List
+
+- [ ] 신규 미체결 데이터를 ViT에 추가 학습하여 성능 테스트 — 은나라
+
+- [ ] [미체결 데이터](https://drive.google.com/open?id=1mdAoy3F7oiG6mLsPZScH3Xt3Z6Ezcvzs&usp=drive_copy) 활용
+
+- [ ] YOLOv11과 RF-DETR의 탐지 결과 이미지 첨부
+
+- [ ] RF-DETR 평가 지표 정리
+
+- [ ] 소형 객체 탐지 관련 논문을 베이스라인으로 선정
+
+- [ ] 베이스라인과 현재 객체 탐지 성능 비교
+
+- [ ] 모델 구조 및 수정 과정 기술 — 용현
+
+- [ ] 객체 탐지 및 분류 임계값 조정 실험
+
+- [ ] 안전고리 미탐 지속 시간을 활용한 위험 판단 기준 검토
+
+- [ ] 영상 결과의 깜빡임 완화 방식 적용
+
+- [ ] 최종 시연 영상 선정
+
+- [ ] 추가 테스트 영상 공유
+
+- [ ] 모델 고도화 진행
+
+- [ ] mAP, Recall, F1-score 및 Threshold 기록
+
+- [ ] 원본 이미지 수와 데이터 증강 규모 기록
+
+- [ ] 각 담당 작업 결과를 종합하여 최종 마무리
+
+![테스트용 사진](https://prod-files-secure.s3.us-west-2.amazonaws.com/d3da60aa-ead8-4f75-9317-196623937ccc/60937da2-c471-4ead-9d1c-dec93c8c6e44/image.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466YDRYV2FT%2F20260719%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260719T090635Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEL%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJIMEYCIQC5kpj7KLPu4bqClmKXkl%2B%2BDUIpMjb0rzoj3%2FNFcpR6BQIhAPuhVT5n28DL2fsc8JpVzUtxyZKjBdjRSfczMoiFVe13KogECIj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMNjM3NDIzMTgzODA1Igz87bposr%2FYjNqxpyoq3APii5mCgqynY%2FShfxBYBm9c9PUVZ30KedNrZX7MrLeoH7vreP3tHX59%2Fa4U9HDTegqzOU3PYLuVW486wcffKFeVZ%2B7nYbfnfI%2F%2BM4eJ8o8OYbQ50FvOEc4OOoku5ZbRpXItMTZ8l5aiG4Q%2F1GxsstFjq6vyXhbT9kwu9UbRYTtO%2F9vaBLMH0VnxiJVgDgTfGPLEa%2BeDEt3uIgM8hA7gT8bK2oHw%2F7JL2rNVyYXjpczhpQNsDf4QW0By2Gm06dTk%2BCw4yrd0Rr%2B5F2ZpBh3aJkmavfbap%2BBpPmE3Z7EfJEYUP%2B%2BfEjdzTkZ1JGEWwz9qkRnwtHw5Ja3IdjoWqQ9hSdk2nHCC4GC4cTy4IEgBQSnj6fa49usOQ%2F8MvvoFNz4w4mC6FLh8LSI%2BDBzdnY5P1mTYnSAPSQIdbayD%2BhyQ9vhKGGBFu0U6J2DJZKDNbfQx18AmtGf3Crn8p51exlDbphyf860tkpYHvyR7zcSQ3P756IEM2d4sDhLECHuxEupMAVlIuAFQvpfTPMLpyPNR3eeSYhWic5nVr4w8QJ1JOJO08aJ7%2BNBXVtaf%2Fz0qB5mnDSTnZWxs%2BxEwsx8iBfgSqnc%2FgSfZgsryA9kjuW5oOSEXC2ApRgHLDLyLsrLAeTDb6vHSBjqkAbfaBcKwBgdZwSuOBzOIxbKh%2B2%2BOl7ns7xTmw9TD4oFXxs%2BxlciHNGy8tvShH%2Bz6gD2yIK%2FvPxUtCJRDEf%2FcfTqBJA7uURyh%2Bi08h2IehacCkn1h8Hu6P8IPT3llgSXH5%2FWTxEROwVmOpeE0csbfVBMVJKeBatCQhGc6gWu6lLqgw0UaIkMc3fqld42dRT6vTCsffOqxQG3jzqo8%2FsCFAaHi6BkP&X-Amz-Signature=075534b10a9d96c768661c9fb5fe9a3105dc9ae59141bd80a7793b883466edcb&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject)
