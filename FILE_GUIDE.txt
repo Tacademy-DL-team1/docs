@@ -19,18 +19,10 @@ Construction Safety Monitoring - 파일 안내
 [.github]
 - .github/ISSUE_TEMPLATE/default-issue-template.md
   설명, 작업 항목, 참고사항 순서로 작성하는 기본 이슈 템플릿입니다.
-- .github/workflows/notion-meeting-pr.yml
-  Notion 회의록을 가져와 문서 브랜치와 Pull Request를 생성하는 GitHub Actions 워크플로입니다.
-- .github/workflows/notion-meeting-refine.yml
-  가져온 회의록을 정해진 Markdown 형식으로 정제하는 GitHub Actions 워크플로입니다.
 
 [assets/diagrams]
 - assets/diagrams/project_workflow.png
   문제 정의, 데이터 수집·라벨링, 객체 탐지·분류 모델 비교, 결과 제시까지의 프로젝트 전체 수행 흐름도입니다.
-
-[guides]
-- guides/notion_meeting_automation.md
-  Notion 회의록 자동화에 필요한 GitHub 설정, 실행 방법과 운영 절차를 설명합니다.
 
 [meeting_log]
 - meeting_log/YYMMDD_meeting.md
@@ -52,12 +44,6 @@ Construction Safety Monitoring - 파일 안내
 - research/README.md
   프로젝트에서 참고한 논문의 주제별 분류와 원문 보관 원칙을 안내합니다.
   논문 원문 PDF는 저작권과 저장소 용량을 고려해 Git 추적에서 제외합니다.
-
-[scripts]
-- scripts/sync_notion_meeting_pr.py
-  Notion의 회의록을 Markdown으로 변환하고 이슈 브랜치 및 PR 생성에 사용할 정보를 준비합니다.
-- scripts/refine_notion_meeting.py
-  Notion에서 가져온 회의록의 제목과 섹션을 팀 문서 형식에 맞게 정리합니다.
 
 [로컬 전용 - GitHub에 업로드하지 않음]
 - research/**/*.pdf: 참고 논문 원문
