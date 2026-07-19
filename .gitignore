@@ -1,2 +1,117 @@
+# ------------------------------------------------------------
+# Security: credentials and local environment files
+# ------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+service-account*.json
+secrets*.json
+.npmrc
+.netrc
+
+# ------------------------------------------------------------
+# Data: raw/processed datasets must not be committed
+# ------------------------------------------------------------
+/data/
+/dataset/
+/datasets/
+/raw_data/
+/processed_data/
 *.csv
+*.tsv
 *.xlsx
+*.xls
+*.parquet
+*.feather
+*.jsonl
+*.db
+*.sqlite
+*.sqlite3
+
+# ------------------------------------------------------------
+# ML artifacts: weights, checkpoints, arrays, and experiment runs
+# ------------------------------------------------------------
+/artifacts/
+/outputs/
+/runs/
+/models/
+/weights/
+/checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.h5
+*.hdf5
+*.pb
+*.tflite
+*.pkl
+*.pickle
+*.joblib
+*.npy
+*.npz
+
+# ------------------------------------------------------------
+# Large media and archives
+# Documentation images and presentation PDFs are intentionally allowed.
+# ------------------------------------------------------------
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+
+# ------------------------------------------------------------
+# Python, notebooks, test caches, and virtual environments
+# ------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.ipynb
+.ipynb_checkpoints/
+
+# ------------------------------------------------------------
+# Local drafts, temporary files, logs, and editor/OS metadata
+# ------------------------------------------------------------
+tmp/
+temp/
+tmp_drafts/
+tmp_refined/
+local_backup/
+*.tmp
+*.bak
+*.log
+~$*
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# ------------------------------------------------------------
+# Research originals: keep locally unless redistribution is permitted
+# ------------------------------------------------------------
+research/**/*.pdf

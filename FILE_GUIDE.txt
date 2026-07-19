@@ -1,0 +1,54 @@
+Construction Safety Monitoring - 파일 안내
+============================================
+
+이 파일은 docs 저장소에 포함된 파일이 어떤 내용을 담고 있는지 빠르게 확인하기 위한 목록입니다.
+원천 데이터, CCTV 영상, 모델 가중치, 체크포인트, 개인 인증정보는 이 저장소에 포함하지 않습니다.
+
+[저장소 루트]
+- README.md
+  저장소 목적, 폴더 구조, 주요 문서 링크와 문서 관리 원칙을 안내합니다.
+- FILE_GUIDE.txt
+  각 폴더와 파일의 역할을 간단히 설명하는 현재 문서입니다.
+- gitmessage.txt
+  팀 커밋 메시지 작성 형식을 맞추기 위한 Git 커밋 템플릿입니다.
+- .gitignore
+  데이터, 모델 파일, 비밀정보, 대용량 미디어와 로컬 임시 파일이 Git에 올라가지 않도록 제외합니다.
+- .gitattributes
+  운영체제에 관계없이 텍스트 줄바꿈을 LF로 통일하고 이미지·PDF를 바이너리로 처리합니다.
+
+[.github]
+- .github/ISSUE_TEMPLATE/default-issue-template.md
+  설명, 작업 항목, 참고사항 순서로 작성하는 기본 이슈 템플릿입니다.
+
+[assets/diagrams]
+- assets/diagrams/project_workflow.png
+  문제 정의, 데이터 수집·라벨링, 객체 탐지·분류 모델 비교, 결과 제시까지의 프로젝트 전체 수행 흐름도입니다.
+
+[meeting_log]
+- meeting_log/YYMMDD_meeting.md
+  해당 날짜에 진행한 팀 회의의 논의 내용, 결정 사항과 작업 항목을 기록합니다.
+
+[presentations]
+- presentations/construction_safety_final_presentation.pdf
+  문제 정의, 데이터 구성, 모델 실험, 데모와 기대효과를 담은 프로젝트 최종 발표자료입니다.
+
+[reports]
+- reports/construction_safety_enhancement_report.md
+  발표자료를 바탕으로 프로젝트 배경, 기술 구성, 실험 결과와 개선 방향을 상세히 정리한 보고서입니다.
+- reports/construction_safety_enhancement_summary.md
+  프로젝트의 핵심 문제, 접근 방법, 결과와 기대효과를 짧게 요약한 문서입니다.
+- reports/local_run_guide.md
+  코드 저장소를 로컬 환경에서 설치하고 실행하는 절차 및 주의사항을 설명합니다.
+
+[research]
+- research/README.md
+  프로젝트에서 참고한 논문의 주제별 분류와 원문 보관 원칙을 안내합니다.
+  논문 원문 PDF는 저작권과 저장소 용량을 고려해 Git 추적에서 제외합니다.
+
+[로컬 전용 - GitHub에 업로드하지 않음]
+- research/**/*.pdf: 참고 논문 원문
+- data/, datasets/, raw_data/, processed_data/: 원천·가공 데이터
+- models/, weights/, checkpoints/: 모델 파일 및 학습 체크포인트
+- outputs/, runs/, artifacts/: 실험 결과와 생성 산출물
+- .env, credentials*.json, secrets*.json: 토큰과 인증정보
+- 동영상·음성·압축 파일: 대용량 원본 미디어와 묶음 파일
